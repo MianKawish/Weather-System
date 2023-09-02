@@ -88,7 +88,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                     ),
                     Icon(
                       Icons.sunny,
-                      color: Color.fromARGB(255, 3, 233, 103),
+                      color: Color.fromARGB(255, 0, 179, 122),
                     )
                   ],
                 ),
