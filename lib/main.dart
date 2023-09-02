@@ -1,57 +1,24 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'location.dart';
 import 'networking.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 const apiKey = 'a25da8722d46dd1217e87146d0284676';
 const kTextStyle = TextStyle(fontWeight: FontWeight.w900, fontSize: 40);
 
-void main() => runApp(Locator());
-
-class Locator extends StatefulWidget {
-  const Locator({super.key});
-
-  @override
-  State<Locator> createState() => _LocatorState();
+void main() {
+  runApp(const MyApp());
 }
 
-double latitude = 0;
-double longitude = 0;
-
-class _LocatorState extends State<Locator> {
-  @override
-  void initState() {
-    getLocationData();
-    // TODO: implement initState
-    super.initState();
-  }
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
-  void getLocationData() async {
-    Location location = Location();
-    await location.getCurrentPosition();
-    latitude = location.latitude;
-    longitude = location.longitude;
-    print(latitude);
-    print(longitude);
-    Networking network = Networking();
-    var weatherData = await network.networkingData();
-  }
-
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.dark(),
-      home: Scaffold(
-        body: Center(
-          child: TextButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const LoadingScreen();
-                }));
-              },
-              child: Text('123')),
-        ),
-      ),
+      home: const LoadingScreen(),
     );
   }
 }
@@ -64,6 +31,43 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
+  double latitude = 0;
+  double longitude = 0;
+  @override
+  void initState() {
+    getLocationData();
+    _createSplash();
+    super.initState();
+  }
+
+  void _createSplash() {
+    Future.delayed(
+      const Duration(
+        seconds: 2,
+      ),
+      () {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => const SampleScreen(),
+          ),
+          (route) => false,
+        );
+      },
+    );
+  }
+
+  void getLocationData() async {
+    Location location = Location();
+    await location.getCurrentPosition();
+    latitude = location.latitude;
+    longitude = location.longitude;
+    log(latitude.toString());
+    log(longitude.toString());
+    Networking network = Networking();
+    var weatherData = await network.networkingData();
+    log(weatherData);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,7 +84,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(right: 15),
+                      padding: EdgeInsets.only(right: 15),
                       child: Text(
                         '32',
                         style: kTextStyle,
@@ -99,7 +103,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(8.0),
                       child: Text(
                         "Time for ice cream.",
                         textAlign: TextAlign.right,
@@ -112,6 +116,19 @@ class _LoadingScreenState extends State<LoadingScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class SampleScreen extends StatelessWidget {
+  const SampleScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Text("I am sample screen after splash screen"),
       ),
     );
   }
